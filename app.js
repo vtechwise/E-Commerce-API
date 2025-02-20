@@ -4,14 +4,17 @@ require("express-async-errors");
 const express = require("express");
 
 const connectDB = require("./db/connect");
-
+// middleware
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 
-const app = express();
+// router
+const userRouter = require("./routes/user.route");
 
-// middelware
+const app = express();
 app.use(express.json());
+app.use("/api/v1/auth", userRouter);
+
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
@@ -24,8 +27,7 @@ const start = async () => {
       console.log(`Server started at ${port}`);
     });
   } catch (error) {
-      console.log(error);
-      
+    console.log(error);
   }
 };
 
