@@ -4,12 +4,12 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 
 const registerUser = async (req, res) => {
-  const { email } = req.body;
+  const { email, name, password } = req.body;
   const emailAlreadyExist = await User.findOne({ email });
   if (emailAlreadyExist) {
     throw new BadRequestError("Email already exist");
   }
-  const response = await User.create(req.body);
+  const response = await User.create({ email, name, password });
 
   const user = {
     name: response.name,
