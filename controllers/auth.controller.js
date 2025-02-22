@@ -17,8 +17,12 @@ const registerUser = async (req, res) => {
     email: response.email,
     userId: response._id,
   };
-  const token = createJWT(user)
-  user.token = token;
+  const token = createJWT(user);
+  const oneDay = 1000 * 60 * 60 * 24;
+  res.cookie("token", token, {
+    httpOnly: true,
+    expires: new Date(Date.now() + oneDay),
+  });
 
   res.status(StatusCodes.CREATED).json(user);
 };
