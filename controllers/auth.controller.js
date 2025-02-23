@@ -43,13 +43,18 @@ const loginUser = async (req, res) => {
     name: user.name,
     email: user.email,
     userId: user._id,
-    role:user.role
+    role: user.role,
   };
   attachCookieToResponse(res, tokenUser);
   res.status(StatusCodes.OK).json(tokenUser);
 };
 
-const logoutUser = async (req, res) => {};
+const logoutUser = async (req, res) => {
+  res.cookie("token", "logout", {
+    httpOnly: true,
+    expires: new Date(Date.now()),
+  });
+};
 
 module.exports = {
   registerUser,
