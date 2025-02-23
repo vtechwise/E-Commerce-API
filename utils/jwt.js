@@ -7,8 +7,8 @@ const createJWT = (payload) => {
 };
 
 const validateToken = async (token) => {
-    return jwt.verify(token, process.env.JWT_SECRET)
-}
+  return jwt.verify(token, process.env.JWT_SECRET);
+};
 
 const attachCookieToResponse = (res, user) => {
   const token = createJWT(user);
@@ -16,10 +16,12 @@ const attachCookieToResponse = (res, user) => {
   res.cookie("token", token, {
     httpOnly: true,
     expires: new Date(Date.now() + oneDay),
+      secure: process.env.NODE_ENV === "production",
+    signed:true
   });
 };
 module.exports = {
   createJWT,
-    attachCookieToResponse,
-  validateToken
+  attachCookieToResponse,
+  validateToken,
 };
