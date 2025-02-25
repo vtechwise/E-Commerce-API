@@ -25,7 +25,16 @@ const showCurrentUser = (req, res) => {
   res.status(StatusCodes.OK).json({ user: req.user });
 };
 
-const updateUser = async (req, res) => {};
+const updateUser = async (req, res) => {
+    const { name, email } = req.body
+    if (!name || !email) {
+        throw new BadRequestError('Please provide name and email ')
+    }
+    const user = await User.findOne({ _id: req.user.userId })
+    user.name = name 
+    user.email = email
+    await user.save()
+};
 
 const deleteUser = (req, res) => {
   res.send("");
