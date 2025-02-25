@@ -2,14 +2,15 @@ const { UnauthenticatedError } = require("../errors");
 const UnauthorizedError = require("../errors/UnauthorizeError");
 const { validateToken } = require("../utils/jwt");
 
-const authenticateUser = (req, res, next) => {
+const authenticateUser = async (req, res, next) => {
   const token = req.signedCookies.token;
   if (!token) {
     throw new UnauthenticatedError("Authentication Failed ");
   }
   try {
-    const { name, role, userId } = validateToken(token);
-    req.user = { name, userId, role };
+    const { name, role, userId, email } = await validateToken(token);
+
+    req.user = { name, userId, role, email };
     next();
   } catch (error) {
     throw new UnauthenticatedError("authentication Failed");

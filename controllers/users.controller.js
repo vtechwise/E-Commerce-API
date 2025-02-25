@@ -5,6 +5,8 @@ const {
   BadRequestError,
   UnauthenticatedError,
 } = require("../errors");
+const { createTokenUser, checkPermission } = require("../utils");
+const { attachCookieToResponse } = require("../utils/jwt");
 
 const getAllUsers = async (req, res) => {
   const users = await User.find({ role: "user" }).select("-password");
@@ -16,9 +18,9 @@ const getSingleUser = async (req, res) => {
   const user = await User.findOne({ _id: req.params.id }).select("-password");
   if (!user) {
     throw new NotFoundError(`No user with this given id ${req.params.id}`);
-  }
+    }
+    checkPermission(req.user,user._id)
   res.status(StatusCodes.OK).json({ user });
-  res.send("get single user");
 };
 
 const showCurrentUser = (req, res) => {
@@ -26,14 +28,17 @@ const showCurrentUser = (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-    const { name, email } = req.body
-    if (!name || !email) {
-        throw new BadRequestError('Please provide name and email ')
-    }
-    const user = await User.findOne({ _id: req.user.userId })
-    user.name = name 
-    user.email = email
-    await user.save()
+  const { name, email } = req.body;
+  if (!name || !email) {
+    throw new BadRequestError("Please provide name and email ");
+  }
+  const user = await User.findOne({ _id: req.user.userId });
+  user.name = name;
+  user.email = email;
+  await user.save();
+  const tokenUser = createTokenUser(user);
+  attachCookieToResponse(res, tokenUser);
+  res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 
 const deleteUser = (req, res) => {
@@ -42,11 +47,13 @@ const deleteUser = (req, res) => {
 
 const updateUserPassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
-  if (!oldPassword || newPassword) {
-    throw new BadRequestError("Please provude both input fields");
+  if (!oldPassword || !newPassword) {
+    throw new BadRequestError("Please provide both input fields");
   }
   const user = await User.findOne({ _id: req.user.userId });
+
   const isPasswordCorrect = await user.comparePassword(oldPassword);
+
   if (!isPasswordCorrect) {
     throw new UnauthenticatedError("Invalid password");
   }
