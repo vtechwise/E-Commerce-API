@@ -1,4 +1,5 @@
 const { UnauthenticatedError } = require("../errors");
+const UnauthorizedError = require("../errors/UnauthorizeError");
 const { validateToken } = require("../utils/jwt");
 
 const authenticateUser = (req, res, next) => {
@@ -15,4 +16,13 @@ const authenticateUser = (req, res, next) => {
   }
 };
 
-module.exports = authenticateUser;
+const authorizePermissions = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      throw new UnauthorizedError("You are not unthorize to access this route");
+    }
+    next();
+  };
+};
+
+module.exports = { authenticateUser, authorizePermissions };
