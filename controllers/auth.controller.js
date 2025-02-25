@@ -31,11 +31,14 @@ const loginUser = async (req, res) => {
   if (!user) {
     throw new BadRequestError("Invalid Credentials");
   }
-  const correctPassword = user.comparePassword(password);
+  const correctPassword = await user.comparePassword(password);
+
   if (!correctPassword) {
     throw new UnauthenticatedError("Incorrect password");
   }
   const tokenUser = createTokenUser(user);
+  // console.log(tokenUser);
+
   attachCookieToResponse(res, tokenUser);
   res.status(StatusCodes.OK).json(tokenUser);
 };
