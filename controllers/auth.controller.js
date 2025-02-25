@@ -6,7 +6,7 @@ const {
 } = require("../errors");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
-const { createJWT } = require("../utils");
+const { createJWT, createTokenUser } = require("../utils");
 const { attachCookieToResponse } = require("../utils/jwt");
 
 const registerUser = async (req, res) => {
@@ -17,11 +17,7 @@ const registerUser = async (req, res) => {
   }
   const response = await User.create({ email, name, password });
 
-  const user = {
-    name: response.name,
-    email: response.email,
-    userId: response._id,
-  };
+  const user = createTokenUser(response);
   attachCookieToResponse(res, user);
   res.status(StatusCodes.CREATED).json(user);
 };
@@ -39,12 +35,7 @@ const loginUser = async (req, res) => {
   if (!correctPassword) {
     throw new UnauthenticatedError("Incorrect password");
   }
-  const tokenUser = {
-    name: user.name,
-    email: user.email,
-    userId: user._id,
-    role: user.role,
-  };
+  const tokenUser = createTokenUser(user);
   attachCookieToResponse(res, tokenUser);
   res.status(StatusCodes.OK).json(tokenUser);
 };
