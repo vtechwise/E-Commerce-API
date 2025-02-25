@@ -1,23 +1,43 @@
-const getAllUsers = (req, res) => {};
+const { StatusCodes } = require("http-status-codes");
+const User = require("../models/user.model");
+const { NotFoundError } = require("../errors");
 
-const getSingleUser = (req, res) => { };
+const getAllUsers = async (req, res) => {
+  const users = await User.find({ role: "user" }).select("-password");
 
-const showCurrentUser = () => [
-    
-]
+  res.status(StatusCodes.OK).json({ users });
+};
 
-const updateUser = (req, res) => {};
+const getSingleUser = async (req, res) => {
+  const user = await User.findOne({ _id: req.params.id }).select("-password");
+  if (!user) {
+    throw new NotFoundError(`No user with this given id ${req.params.id}`);
+  }
+  res.status(StatusCodes.OK).json({ user });
+  res.send("get single user");
+};
 
-const deleteUser = (req, res) => {};
+const showCurrentUser = (req, res) => {
+  res.send("get all users");
+};
 
-const updateUserPassword = (req, res) => {};
+const updateUser = (req, res) => {
+  res.send("update user");
+};
 
+const deleteUser = (req, res) => {
+  res.send("");
+};
+
+const updateUserPassword = (req, res) => {
+  res.send("update password");
+};
 
 module.exports = {
-    getAllUsers,
-    getSingleUser,
-    deleteUser,
-    updateUserPassword,
-    updateUser,
-    showCurrentUser
-}
+  getAllUsers,
+  getSingleUser,
+  deleteUser,
+  updateUserPassword,
+  updateUser,
+  showCurrentUser,
+};
