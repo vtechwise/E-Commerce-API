@@ -13,7 +13,7 @@ const createProduct = async (req, res) => {
   res.send("get all product");
 };
 const getSingleProduct = async (req, res) => {
-  const productId = req.params;
+  const productId = req.params.id;
   const product = await Product.findOne({ _id: productId });
   if (!product) {
     throw new NotFoundError(`No product with the given id :${productId}`);
@@ -22,7 +22,15 @@ const getSingleProduct = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-  res.send("get single product");
+  const { id: productId } = req.params;
+  const product = await Product.findOneAndUpdate({ _id: productId }, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!product) {
+    throw new NotFoundError(`No product with the given id :${productId}`);
+  }
+  res.status(StatusCodes.OK).json({ product });
 };
 
 const deleteProduct = async (req, res) => {
