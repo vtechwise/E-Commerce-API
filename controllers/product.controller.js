@@ -1,14 +1,14 @@
-const { StatusCodes } = require('http-status-codes');
-const Product = require('../routes/product.route')
-
+const { StatusCodes } = require("http-status-codes");
+const Product = require("../routes/product.route");
 
 const getAllProduct = async (req, res) => {
-  res.send("get all product");
+  const products = await Product.find({});
+  res.status(StatusCodes.OK).json({ products, count: products.length });
 };
 const createProduct = async (req, res) => {
-    req.body.user = req.user.userId
-    const product = await Product.create(req.body)
-    res.status(StatusCodes.CREATED).json({product})
+  req.body.user = req.user.userId;
+  const product = await Product.create(req.body);
+  res.status(StatusCodes.CREATED).json({ product });
   res.send("get all product");
 };
 const getSingleProduct = async (req, res) => {
