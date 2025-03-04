@@ -4,7 +4,8 @@ const Product = require("../models/product.model");
 const Review = require("../models/review.model");
 
 const getAllReviews = async (req, res) => {
- 
+    const reviews = await Review.find({})
+    res.status(StatusCodes.OK).json({reviews})
 };
 
 const getSingleReview = async (req, res) => {
