@@ -1,16 +1,19 @@
 const { StatusCodes } = require("http-status-codes");
-const Product = require("../routes/product.route");
+const Product = require("../models/product.model");
 const { NotFoundError } = require("../errors");
 
 const getAllProduct = async (req, res) => {
   const products = await Product.find({});
+  console.log(products);
+  if (!products) {
+    throw new NotFoundError("No product found");
+  }
   res.status(StatusCodes.OK).json({ products, count: products.length });
 };
 const createProduct = async (req, res) => {
   req.body.user = req.user.userId;
   const product = await Product.create(req.body);
   res.status(StatusCodes.CREATED).json({ product });
-  res.send("get all product");
 };
 const getSingleProduct = async (req, res) => {
   const productId = req.params.id;
