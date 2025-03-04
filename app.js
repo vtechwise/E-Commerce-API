@@ -12,6 +12,7 @@ const errorHandlerMiddleware = require("./middleware/error-handler");
 const authRouter = require("./routes/auth.route");
 const usersRouter = require('./routes/users.route')
 const productRouter = require('./routes/product.route')
+const reviewRouter = require('./routes/review.route')
 
 // others
 const cookieParser = require("cookie-parser");
@@ -24,6 +25,7 @@ app.use(fileUpload())
 app.use("/api/v1/auth", authRouter);
 app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/products', productRouter)
+app.use('api/v1/reviews', reviewRouter)
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
