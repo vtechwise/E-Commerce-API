@@ -18,6 +18,7 @@ const cookieParser = require("cookie-parser");
 
 const app = express();
 app.use(express.json());
+app.use(express.static('./public'))
 app.use(cookieParser(process.env.JWT_SECRET))
 app.use("/api/v1/auth", authRouter);
 app.use('/api/v1/users', usersRouter)
