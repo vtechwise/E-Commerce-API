@@ -21,8 +21,9 @@ const deleteReview = async (req, res) => {
 
 
 module.exports = {
-    getAllReviews,
-    getSingleReview,
-    updateReview,
-    deleteReview
-}
+  getAllReviews,
+  getSingleReview,
+  updateReview,
+  deleteReview,
+  createReview,
+};
