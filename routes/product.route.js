@@ -11,6 +11,7 @@ const {
   authenticateUser,
   authorizePermissions,
 } = require("../middleware/authentication");
+const { getSingleProductReview } = require("../controllers/review.controller");
 
 const router = express.Router();
 
@@ -19,6 +20,7 @@ router
   .get(getAllProduct)
   .post([authenticateUser, authorizePermissions("admin")], createProduct);
 router.post("/upload", authorizePermissions("admin"), uploadImage);
+router.get("/:id/reviews", getSingleProductReview);
 router
   .route("/:id")
   .get(getSingleProduct)

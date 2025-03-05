@@ -36,6 +36,11 @@ const createReview = async (req, res) => {
   res.status(StatusCodes.CREATED).json({ review });
 };
 
+const getSingleProductReview = async (req, res) => {
+  const { id: productId } = req.params 
+  const reviews = await Review.find({ product: productId })
+  res.status(StatusCodes.OK).json({reviews})
+}
 const updateReview = async (req, res) => {
   const { id: reviewId } = req.params
   const {title, comment,rating} = req.body
@@ -51,6 +56,7 @@ const updateReview = async (req, res) => {
   res.status(StatusCodes.OK).json({review})
 
 };
+
 
 const deleteReview = async (req, res) => {
   const { id: reviewId } = req.params;
@@ -70,4 +76,5 @@ module.exports = {
   updateReview,
   deleteReview,
   createReview,
+  getSingleProductReview
 };
