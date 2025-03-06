@@ -1,12 +1,67 @@
-const createOrder = async (req, res) => {
-    res.send('create order')
+const { NotFoundError, BadRequestError } = require("../errors");
+const Product = require("../models/product.model");
+const Order = require("../models/order.model");
+const { StatusCodes } = require("http-status-codes");
+
+
+const fakeStripAPI = async ({ amount, currency }){
+    const clientSecret = 'someRandom'
+    return {clientSecret, amount }
 }
+
+const createOrder = async (req, res) => {
+  const { items: cartItems, shippingFee, tax } = req.body;
+  if (!cartItems || cartItems.length < 1) {
+    throw new NotFoundError("   No cart item found");
+  }
+  if (!shippingFee) {
+    throw new BadRequestError("Please provide shipping fee");
+  }
+  if (!tax) {
+    throw new BadRequestError("Please provide tax amount");
+  }
+
+  let orderItems = [];
+  let subTotal = 0;
+
+  for (const item of cartItems) {
+    const dbProduct = await Product.findOne({ _id: item.product });
+    if (!dbProduct) {
+      throw new NotFoundError(`No product withe the given id: ${item.product}`);
+    }
+    const { name, image, price, _id } = dbProduct;
+    const singleOrderItem = {
+      amount: item.amount,
+      name,
+      price,
+      image,
+      product: _id,
+    };
+      orderItems = [...orderItems, singleOrderItem];
+      subTotal += price * item.amount
+    }
+     const total = shippingFee + tax + subTotal
+      const paymentIntentId = await fakeStripAPI({
+          amount: total,
+          currency:'usd'
+      })
+    const order =await Order.create({
+        tax,
+        shippingFee,
+        total,
+        subTotal,
+        orderItems,
+        user: req.user.userId,
+        clientSecret:paymentIntentId.clientSecret,
+    })
+  res.status(StatusCodes.CREATED).json({order,clientSecret:order.clientSecret});
+};
 const getAllOrders = async (req, res) => {
   res.send("get all orders");
 };
 const getSingleOrder = async (req, res) => {
   res.send("get single order");
-}
+};
 const getCurrentUserOrders = async (req, res) => {
   res.send("get current user orders ");
 };
@@ -15,11 +70,10 @@ const updateOrders = async (req, res) => {
   res.send("update orders");
 };
 
-
 module.exports = {
-    getAllOrders,
-    getCurrentUserOrders,
-    getSingleOrder,
-    createOrder,
-    updateOrders
-}
+  getAllOrders,
+  getCurrentUserOrders,
+  getSingleOrder,
+  createOrder,
+  updateOrders,
+};
