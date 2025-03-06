@@ -4,7 +4,7 @@ const Order = require("../models/order.model");
 const { StatusCodes } = require("http-status-codes");
 
 
-const fakeStripAPI = async ({ amount, currency }){
+const fakeStripAPI = async ({ amount, currency })=>{
     const clientSecret = 'someRandom'
     return {clientSecret, amount }
 }
