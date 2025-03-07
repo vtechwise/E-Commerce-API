@@ -2,6 +2,7 @@ const { NotFoundError, BadRequestError } = require("../errors");
 const Product = require("../models/product.model");
 const Order = require("../models/order.model");
 const { StatusCodes } = require("http-status-codes");
+const {checkPermission} = require('../utils')
 
 
 const fakeStripAPI = async ({ amount, currency })=>{
@@ -62,7 +63,13 @@ const getAllOrders = async (req, res) => {
   res.send("get all orders");
 };
 const getSingleOrder = async (req, res) => {
-  res.send("get single order");
+  const { id: OrderId } = req.params
+  const order = await Order.findOne({ _ud: OrderId })
+  if (!order) {
+    throw new NotFoundError(`no order with the given id ${OrderId}`)
+  }
+  checkPermission(req.user, order.user)
+  res.status(StatusCodes.OK).json({order});
 };
 const getCurrentUserOrders = async (req, res) => {
   res.send("get current user orders ");
