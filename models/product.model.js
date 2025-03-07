@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ProductSchema = new mongoose.Schema(
+const ProductSchema =  mongoose.Schema(
   {
     name: {
       type: String,
@@ -75,8 +75,13 @@ ProductSchema.virtual("Review", {
   justOne: false,
 });
 
-ProductSchema.pre('remove', async function (next) {
-  await this.model('Review').deleteMany({product:this._id})
-})
+ProductSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    await this.model("Review").deleteMany({ product: this._id });
+    next();
+  }
+);
 
 module.exports = mongoose.model("Product", ProductSchema);

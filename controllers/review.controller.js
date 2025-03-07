@@ -61,12 +61,14 @@ const updateReview = async (req, res) => {
 const deleteReview = async (req, res) => {
   const { id: reviewId } = req.params;
   const review = await Review.findOne({ _id: reviewId });
+  console.log(review);
+  
   if (!review) {
     throw new NotFoundError(`No review with this id ${reviewId}`);
   }
 
   checkPermission(req.user, review.user);
-  await review.remove()
+  await review.deleteOne()
   res.status(StatusCodes.OK).json({ message: "Review deleted" });
 };
 
