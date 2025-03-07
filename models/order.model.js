@@ -53,9 +53,8 @@ const OrderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    clientId: {
-      type: Number,
-      required: true,
+    clientSecret: {
+      type: String,
     },
     paymentIntentId: {
       type: String,
