@@ -20,7 +20,7 @@ router
   .get(getAllProduct)
   .post([authenticateUser, authorizePermissions("admin")], createProduct);
 router.post("/upload", authorizePermissions("admin"), uploadImage);
-router.get("/:id/reviews", getSingleProductReview);
+// router.get("/:id/reviews", getSingleProductReview);
 router
   .route("/:id")
   .get(getSingleProduct)

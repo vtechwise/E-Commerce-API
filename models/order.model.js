@@ -44,6 +44,7 @@ const OrderSchema = new mongoose.Schema(
     },
     orderItems: [SingleOrderItemSchema],
     status: {
+      type:String,
       enum: ["Pending", "Failed", "Delivered", "Cancelled", "Paid"],
       default: "Pending",
     },
