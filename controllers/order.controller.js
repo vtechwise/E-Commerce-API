@@ -74,9 +74,8 @@ const getSingleOrder = async (req, res) => {
 const getCurrentUserOrders = async (req, res) => {
   const id = req.user.userId
   const orders = await Order.find({ user: id })
-  checkPermission(req.user, orders.user)
   
-  res.status(StatusCodes.OK).json({orders});
+  res.status(StatusCodes.OK).json({orders,count:orders.length});
 };
 
 const updateOrders = async (req, res) => {
