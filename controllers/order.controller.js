@@ -57,6 +57,8 @@ const createOrder = async (req, res) => {
   res.status(StatusCodes.CREATED).json({order,clientSecret:order.clientSecret});
 };
 const getAllOrders = async (req, res) => {
+  const orders = await Order.find({})
+  res.status(StatusCodes.OK).json({orders})
   res.send("get all orders");
 };
 const getSingleOrder = async (req, res) => {
